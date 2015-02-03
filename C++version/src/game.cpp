@@ -10,12 +10,7 @@ gameContext::~gameContext()
 	//dtor
 }
 void clearScreen(){
-	//todo replace with curses
-	#ifdef _WIN32
-		system("cls");
-	#else
-		system("clear");
-	#endif
+	printf("\e[1;1H\e[2J");
 }
 void drawLine(unsigned short width=CONSOLE_WIDTH){
 	for(unsigned short x=0; x<width; x++)
