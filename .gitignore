@@ -5,6 +5,6 @@
 #C++ crap
 *.o
 bin/
-src/
+obj/
 *.depend
 *.cbp
