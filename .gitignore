@@ -2,3 +2,9 @@
 *~
 *#
 .#*
+#C++ crap
+*.o
+bin/
+src/
+*.depend
+*.cbp
