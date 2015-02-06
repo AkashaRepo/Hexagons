@@ -1,0 +1,5 @@
+this needs to be replaced by a makefile, but IDK how to make those quite yet.
+
+
+type this into terminal:
+g++ main.cpp hexGrid.cpp game.cpp -o game
