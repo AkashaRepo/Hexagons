@@ -37,7 +37,18 @@ class HexMap(object):
         self.grid[Y][X].drawSymbol(symbol)
         self.renderMap()
     def getRad(self):
+        """Return's the Map's radius"""
         return self.rad
+    def cellIsClear(self, Y, X):
+        """Checks if a cell avalable, returns false if cell is occupied or non existant."""
+        if X > self.rad or X < -self.rad:
+            return False
+        elif Y > self.rad or Y < -self.rad:
+            return False
+        elif self.grid[Y][X].isOccupied():
+            return False
+        else:
+            return True
 
 class HexCell(object):
     """A cell on a hexagonal map"""
@@ -75,27 +86,31 @@ class actor(object):
         self.icon = symbol
         self.grid.placeSymbol(self.Y,self.X,self.icon)
     def step(self, direction):
-        neighbors = {'w':(self.Y-1,self.X),
-                     'e':(self.Y-1,self.X+1),
-                     'a':(self.Y,self.X-1),
-                     'd':(self.Y,self.X+1),
-                     'z':(self.Y+1,self.X-1),
-                     'x':(self.Y+1,self.X)}
-        Y = neighbors[direction][0]
-        X = neighbors[direction][1]
-        if X > self.grid.getRad() or X < -self.grid.getRad():
-            pass
-        elif Y > self.grid.getRad() or Y < -self.grid.getRad():
-            pass
-        elif self.grid.grid[Y][X].isOccupied():
-            pass
-        else:
-            return self.moveTo(Y,X)
+        neighbors = {'w':self.moveTo(self.Y-1,self.X),
+                     'e':self.moveTo(self.Y-1,self.X+1),
+                     'a':self.moveTo(self.Y,self.X-1),
+                     'd':self.moveTo(self.Y,self.X+1),
+                     'z':self.moveTo(self.Y+1,self.X-1),
+                     'x':self.moveTo(self.Y+1,self.X)}        
+        return neighbors[direction]
     def moveTo(self, Y, X):
-        self.grid.eraseCell(self.Y,self.X)
+        if self.grid.cellIsClear(Y,X):
+            self.grid.eraseCell(self.Y,self.X)
+            self.Y = Y
+            self.X = X
+            self.grid.placeSymbol(Y,X,self.icon)
+            print thePlayer.Y, thePlayer.X
+        else:
+            pass
+class wall(actor):
+    """A wall on the map"""
+    def __init__(self, location, Y,X):
+        """places the wall"""
+        self.grid = location
         self.Y = Y
         self.X = X
-        self.grid.placeSymbol(Y,X,self.icon)
+        self.icon = "#"
+        self.grid.placeSymbol(self.Y,self.X,self.icon)
 
 def getch():
     """Waits for a single keypress from the user.
@@ -108,19 +123,21 @@ def getch():
     return keypress                                        #returns the key pressed
 
 
-theMap = HexMap(11,'.')
-thePlayer = actor(theMap, 0,0,'@')
-aWall = actor(theMap,0,1,'#')
+theMap = HexMap(3,'.')
+thePlayer = actor(theMap, 1,0,'@')
+#Walls = [wall(theMap,0,1),
+#         wall(theMap,0,0),
+#         wall(theMap,0,-1)]
 
 game = True
 while game == True:
     key = getch()
-    
     if key in ['w','e','a','d','z','x']:
         thePlayer.step(key)
-    elif key == 'q':
+    elif key == 'Q':
         game = False
     elif key == 's':
         thePlayer.moveTo(0,0)
     else:
         pass
+
